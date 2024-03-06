@@ -9,8 +9,7 @@ import javax.persistence.Id;
 @Entity
 public class TransactionRequests {
     @Id
-//    @GeneratedValue
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String transactionType;
     private String transID;
@@ -31,6 +30,11 @@ public class TransactionRequests {
     private int sendMoneySuccessful;
     private int transactionReversed;
     private int transactionCompleted;
+    private String sendMoneyErrorCode;
+    private String sendMoneyRequestId;
+    private String sendMoneyErrorMessage;
+    private String companyAmount;
+
 
     public Integer getId() {
         return id;
@@ -190,5 +194,37 @@ public class TransactionRequests {
 
     public void setTransactionCompleted(int transactionCompleted) {
         this.transactionCompleted = transactionCompleted;
+    }
+
+    public String getSendMoneyErrorCode() {
+        return sendMoneyErrorCode;
+    }
+
+    public void setSendMoneyErrorCode(String sendMoneyErrorCode) {
+        this.sendMoneyErrorCode = sendMoneyErrorCode;
+    }
+
+    public String getSendMoneyRequestId() {
+        return sendMoneyRequestId;
+    }
+
+    public void setSendMoneyRequestId(String sendMoneyRequestId) {
+        this.sendMoneyRequestId = sendMoneyRequestId;
+    }
+
+    public String getSendMoneyErrorMessage() {
+        return sendMoneyErrorMessage;
+    }
+
+    public void setSendMoneyErrorMessage(String sendMoneyErrorMessage) {
+        this.sendMoneyErrorMessage = sendMoneyErrorMessage;
+    }
+
+    public String getCompanyAmount() {
+        return companyAmount;
+    }
+
+    public void setCompanyAmount(String companyAmount) {
+        this.companyAmount = companyAmount;
     }
 }

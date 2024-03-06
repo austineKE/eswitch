@@ -1,8 +1,8 @@
-package com.tech.eswitch.dto.sendSuccess;
+package com.tech.eswitch.dto.sendResult;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SendSuccess {
+public class SendResult {
     @JsonProperty("Result")
     private Result result;
 

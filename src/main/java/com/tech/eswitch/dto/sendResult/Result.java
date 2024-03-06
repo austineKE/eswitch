@@ -1,4 +1,4 @@
-package com.tech.eswitch.dto.sendFailed;
+package com.tech.eswitch.dto.sendResult;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,6 +15,8 @@ public class Result {
     private String conversationID;
     @JsonProperty("TransactionID")
     private String transactionID;
+    @JsonProperty("ResultParameters")
+    private ResultParameters resultParameters;
     @JsonProperty("ReferenceData")
     private ReferenceData referenceData;
 
@@ -64,6 +66,14 @@ public class Result {
 
     public void setTransactionID(String transactionID) {
         this.transactionID = transactionID;
+    }
+
+    public ResultParameters getResultParameters() {
+        return resultParameters;
+    }
+
+    public void setResultParameters(ResultParameters resultParameters) {
+        this.resultParameters = resultParameters;
     }
 
     public ReferenceData getReferenceData() {

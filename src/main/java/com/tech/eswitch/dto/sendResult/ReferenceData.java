@@ -1,4 +1,4 @@
-package com.tech.eswitch.dto.sendFailed;
+package com.tech.eswitch.dto.sendResult;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
