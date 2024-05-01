@@ -10,6 +10,7 @@ import com.tech.eswitch.dto.send.SendSuccess;
 import com.tech.eswitch.interfaces.SendMoney;
 import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
+import com.tech.eswitch.utils.TokenGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ import java.util.List;
 public class SendMoneyImpl implements SendMoney {
     private TransactionRepo transactionRepo;
     private ScheduleConf scheduleConf;
+    private TokenGenerator tokenGenerator;
 
-    public SendMoneyImpl(TransactionRepo transactionRepo,ScheduleConf scheduleConf) {
+    public SendMoneyImpl(TransactionRepo transactionRepo, ScheduleConf scheduleConf,TokenGenerator tokenGenerator) {
         this.transactionRepo = transactionRepo;
-        this.scheduleConf=scheduleConf;
+        this.scheduleConf = scheduleConf;
+        this.tokenGenerator=tokenGenerator;
     }
 
     @Override
@@ -44,28 +47,33 @@ public class SendMoneyImpl implements SendMoney {
                         .url("https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("Authorization", "Bearer 6WRVg7GTaXOSeAXqwcLAFNPIKu7x")
+                        .addHeader("Authorization", tokenGenerator.getToken())
                         .build();
                 Response response = client.newCall(request).execute();
                 //todo parse response
-                String res =response.body().string();
+                String res = response.body().string();
                 if (res.contains("errorCode")) {
                     ObjectMapper mapper = new ObjectMapper();
                     SendError sendError = mapper.readValue(res, SendError.class);
-                    transaction.setSendMoneySuccessful(0);
-                    transaction.setSendMoneyRetryCount(transaction.getSendMoneyRetryCount()+1);
-                    transaction.setSendMoneyErrorCode(sendError.getErrorCode());
-                    transaction.setSendMoneyErrorMessage(sendError.getErrorMessage());
-                    transaction.setSendMoneyRequestId(sendError.getRequestId());
-                }
-                if (res.contains("ConversationID")) {
+                    System.out.println(res);
+//                    if (!sendError.getErrorMessage().contains("Invalid Access Token")) {
+//                        transaction.setSendMoneySuccessful(0);
+//                        transaction.setSendMoneyRetryCount(transaction.getSendMoneyRetryCount() + 1);
+//                        transaction.setSendMoneyErrorCode(sendError.getErrorCode());
+//                        transaction.setSendMoneyErrorMessage(sendError.getErrorMessage());
+//                        transaction.setSendMoneyRequestId(sendError.getRequestId());
+//                        transactionRepo.save(transaction);
+//                    }
+                } else if (res.contains("ConversationID")) {
                     ObjectMapper mapper = new ObjectMapper();
                     SendSuccess sendSuccess = mapper.readValue(res, SendSuccess.class);
                     transaction.setSendMoneySuccessful(1);
                     transaction.setSendMoneyRetryCount(0);
                     transaction.setSendMoneyRequestId(sendSuccess.getConversationID());
+                    transactionRepo.save(transaction);
+                } else {
+                    System.out.println(res);
                 }
-                transactionRepo.save(transaction);
             } catch (Exception e) {
                 e.printStackTrace();
             }

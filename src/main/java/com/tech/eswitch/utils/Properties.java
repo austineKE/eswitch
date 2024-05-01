@@ -32,4 +32,12 @@ public final class Properties {
     public static String getSecurityCredential() {
         return PropertyReader.getProperty("eSwitch.send.money.securityCredential");
     }
+
+    public static String getTokenUrl(){
+        return PropertyReader.getProperty("eSwitch.send.money.token.api.url");
+    }
+    public static String getTokenAuth(){
+        return PropertyReader.getProperty("eSwitch.send.money.token.api.auth");
+    }
+
 }

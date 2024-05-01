@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.tech.eswitch.configs.ScheduleConf;
-import com.tech.eswitch.dto.TransactionRequest;
-import com.tech.eswitch.dto.TransactionResponseConfirmation;
-import com.tech.eswitch.dto.TransactionResponseValidation;
+import com.tech.eswitch.dto.*;
 import com.tech.eswitch.dto.sendResult.SendResult;
 import com.tech.eswitch.interfaces.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
@@ -23,16 +22,37 @@ public class HomeController {
     private SendMoneyResult sendMoneyResult;
     private TimedOutTransactions timedOutTransactions;
     private ScheduleConf scheduleConf;
+    private final DarajaApi darajaApi;
+    private final AcknowledgeResponse acknowledgeResponse;
 
     public HomeController(final Validate validate, final Confirm confirm, final SendMoney sendMoney
             , TimedOutTransactions timedOutTransactions, SendMoneyResult sendMoneyResult,
-                          ScheduleConf scheduleConf) {
+                          ScheduleConf scheduleConf,
+                          DarajaApi darajaApi,
+                          AcknowledgeResponse acknowledgeResponse) {
         this.validate = validate;
         this.confirm = confirm;
         this.sendMoney = sendMoney;
         this.sendMoneyResult = sendMoneyResult;
         this.timedOutTransactions = timedOutTransactions;
         this.scheduleConf = scheduleConf;
+        this.darajaApi = darajaApi;
+        this.acknowledgeResponse = acknowledgeResponse;
+    }
+
+    @GetMapping(path = "/api/v1/token", produces = "application/json")
+    public ResponseEntity<AccessTokenResponse> getAccessToken() {
+        return ResponseEntity.ok(darajaApi.getAccessToken());
+    }
+
+    @GetMapping(path = "/api/v1/register", produces = "application/json")
+    public ResponseEntity<RegisterUrlResponse> registerUrl() {
+        return ResponseEntity.ok(darajaApi.registerUrl());
+    }
+
+    @PostMapping(path = "/api/v1/c2b", produces = "application/json")
+    public ResponseEntity<SimulateTransactionResponse> simulateB2CTransaction(@RequestBody SimulateTransactionRequest simulateTransactionRequest) {
+        return ResponseEntity.ok(darajaApi.simulateC2BTransaction(simulateTransactionRequest));
     }
 
     /**
@@ -82,7 +102,7 @@ public class HomeController {
     @Scheduled(cron = "&{cron:*/1 * * * * ?}")
     public void sendMoney() {
         if (scheduleConf.isProceed()) {
-            sendMoney.sendMoney();
+            //   sendMoney.sendMoney();
         }
     }
 

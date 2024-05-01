@@ -1,0 +1,14 @@
+server:
+  port: 8080
+mpesa:
+  daraja:
+    consumer-key: djV4klckbCGeYjiimYJRteJVOjtSXAfXaGwF3HKlAWU8Pthh
+    consumer-secret: AgtCAWkZ4GzCVVUaWxFs8OiYtO6AMb2VDVA4erlaSK8OKvqSN4x29kimkASskwa9
+    grant-type: client_credentials
+    oauth-endpoint: https://sandbox.safaricom.co.ke/oauth/v1/generate
+    register-url-endpoint: https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl
+    simulate-transaction-endpoint: https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate
+    shortCode: 600979
+    confirmationURL: https://9af9-105-163-157-163.ngrok-free.app/eswitch/api/v1/confirmation
+    validationURL: https://9af9-105-163-157-163.ngrok-free.app/eswitch/api/v1/validation
+    responseType: Completed

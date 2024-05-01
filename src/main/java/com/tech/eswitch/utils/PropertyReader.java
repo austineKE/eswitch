@@ -10,7 +10,8 @@ public class PropertyReader {
 
     static {
         properties = new Properties();
-        try (InputStream inputStream = PropertyReader.class.getClassLoader().getResourceAsStream(PROPERTY_FILE)) {
+        try (InputStream inputStream = PropertyReader.class.getClassLoader()
+                .getResourceAsStream(PROPERTY_FILE)) {
             properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
