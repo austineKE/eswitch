@@ -24,12 +24,13 @@ public class HomeController {
     private ScheduleConf scheduleConf;
     private final DarajaApi darajaApi;
     private final AcknowledgeResponse acknowledgeResponse;
+    private B2CStatusAndBalance b2CStatusAndBalance;
 
     public HomeController(final Validate validate, final Confirm confirm, final SendMoney sendMoney
             , TimedOutTransactions timedOutTransactions, SendMoneyResult sendMoneyResult,
                           ScheduleConf scheduleConf,
                           DarajaApi darajaApi,
-                          AcknowledgeResponse acknowledgeResponse) {
+                          AcknowledgeResponse acknowledgeResponse, B2CStatusAndBalance b2CStatusAndBalance) {
         this.validate = validate;
         this.confirm = confirm;
         this.sendMoney = sendMoney;
@@ -37,6 +38,7 @@ public class HomeController {
         this.timedOutTransactions = timedOutTransactions;
         this.scheduleConf = scheduleConf;
         this.darajaApi = darajaApi;
+        this.b2CStatusAndBalance=b2CStatusAndBalance;
         this.acknowledgeResponse = acknowledgeResponse;
     }
 
@@ -48,6 +50,16 @@ public class HomeController {
     @GetMapping(path = "/api/v1/register", produces = "application/json")
     public ResponseEntity<RegisterUrlResponse> registerUrl() {
         return ResponseEntity.ok(darajaApi.registerUrl());
+    }
+
+    @GetMapping(path = "/api/v1/status", produces = "application/json")
+    public ResponseEntity<Object> getTransactionStatus() {
+        return ResponseEntity.ok(b2CStatusAndBalance.getTransactionStatus());
+    }
+
+    @GetMapping(path = "/api/v1/balance", produces = "application/json")
+    public ResponseEntity<Object> getAccountBalance() {
+        return ResponseEntity.ok(b2CStatusAndBalance.getAccountBalance());
     }
 
     @PostMapping(path = "/api/v1/c2b", produces = "application/json")

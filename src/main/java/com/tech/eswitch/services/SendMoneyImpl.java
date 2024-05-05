@@ -10,6 +10,7 @@ import com.tech.eswitch.dto.send.SendSuccess;
 import com.tech.eswitch.interfaces.SendMoney;
 import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
+import com.tech.eswitch.utils.PropertyReader;
 import com.tech.eswitch.utils.TokenGenerator;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class SendMoneyImpl implements SendMoney {
                 String json = ow.writeValueAsString(sendMoneyRequest);
                 RequestBody body = RequestBody.create(mediaType, json);
                 Request request = new Request.Builder()
-                        .url("https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest")
+                        .url(PropertyReader.getProperty("eSwitch.send.money.url"))
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .addHeader("Authorization", tokenGenerator.getToken())
