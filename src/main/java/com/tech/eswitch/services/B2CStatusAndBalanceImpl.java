@@ -29,6 +29,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
             AccountBalanceRequest balanceRequest=new AccountBalanceRequest();
+            balanceRequest.setRemarks("Get Account Balance");
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(balanceRequest);
             RequestBody body = RequestBody.create(mediaType, json);
@@ -68,6 +69,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
             TransactionStatusRequest statusRequest=new TransactionStatusRequest();
+            statusRequest.setRemarks("Get transaction status");
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(statusRequest);
             RequestBody body = RequestBody.create(mediaType, json);
