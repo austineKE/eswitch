@@ -9,11 +9,16 @@ import com.tech.eswitch.dto.send.SendError;
 import com.tech.eswitch.interfaces.B2CStatusAndBalance;
 import com.tech.eswitch.utils.PropertyReader;
 import com.tech.eswitch.utils.TokenGenerator;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
 
+    private Logger logger=LoggerFactory.getLogger(B2CStatusAndBalanceImpl.class);
     private TokenGenerator tokenGenerator;
 
     public B2CStatusAndBalanceImpl(TokenGenerator tokenGenerator) {
@@ -26,6 +31,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
         // In case you come up with any dto, have it b2c package
         // https://api.safaricom.co.ke/mpesa/accountbalance/v1/query
         try {
+            logger.info("Begin calling safaricom for account balance");
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
             AccountBalanceRequest balanceRequest=new AccountBalanceRequest();
@@ -86,6 +92,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
                 ObjectMapper mapper = new ObjectMapper();
                 SendError sendError = mapper.readValue(res, SendError.class);
                 System.out.println(res);
+                logger.info("Error occurred {}", res);
                 return sendError;
             } else if (res.contains("ConversationID")) {
                 // TODO: 5/5/2024 confirm what to do when the request is successful
