@@ -1,22 +1,20 @@
-package com.tech.eswitch.dto;
+package com.tech.eswitch.dto.b2c;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
-
-public class TransactionResponseConfirmation implements Serializable {
-
+public class ValidationResult {
     @JsonProperty("ResultCode")
     private String resultCode;
     @JsonProperty("ResultDesc")
     private String resultDesc;
 
-    public TransactionResponseConfirmation(String resultCode, String resultDesc) {
+    // Constructor
+    public ValidationResult(String resultCode, String resultDesc) {
         this.resultCode = resultCode;
         this.resultDesc = resultDesc;
     }
 
-
+    // Getters and setters
     public String getResultCode() {
         return resultCode;
     }
@@ -31,5 +29,14 @@ public class TransactionResponseConfirmation implements Serializable {
 
     public void setResultDesc(String resultDesc) {
         this.resultDesc = resultDesc;
+    }
+
+    // toString() method to print object details
+    @Override
+    public String toString() {
+        return "ValidationResult{" +
+                "resultCode=" + resultCode +
+                ", resultDesc='" + resultDesc + '\'' +
+                '}';
     }
 }

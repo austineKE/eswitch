@@ -1,7 +1,7 @@
 package com.tech.eswitch.services;
 
 import com.tech.eswitch.dto.TransactionRequest;
-import com.tech.eswitch.dto.TransactionResponseValidation;
+import com.tech.eswitch.dto.b2c.ValidationResult;
 import com.tech.eswitch.interfaces.Validate;
 import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
@@ -21,16 +21,13 @@ public class ValidationImpl implements Validate {
     }
 
     @Override
-    public TransactionResponseValidation validate(TransactionRequest transactionRequest) {
+    public ValidationResult validate(TransactionRequest transactionRequest) {
         try {
-            logger.info(transactionRequest.getBusinessShortCode());
             TransactionRequests transactionRequests = new TransactionRequests();
             transactionRequests.setBillRefNumber(transactionRequest.getBillRefNumber());
             transactionRequests.setBusinessShortCode(transactionRequest.getBusinessShortCode());
             transactionRequests.setFirstName(transactionRequest.getFirstName());
             //transactionRequests.setInvoiceNumber(transactionRequest.getInvoiceNumber());
-            //transactionRequests.setLastName(transactionRequest.getLastName());
-            //transactionRequests.setMiddleName(transactionRequest.getMiddleName());
             String[] strings = transactionRequest.getInvoiceNumber().split("!");
             transactionRequests.setMsisdn(strings[2]);
             transactionRequests.setOrgAccountBalance(transactionRequest.getOrgAccountBalance());
@@ -45,15 +42,15 @@ public class ValidationImpl implements Validate {
                 transactionRequests.setTransactionCompleted(1);
                 transactionRequests.setAmountAwarded("0");
                 transactionRepo.save(transactionRequests);
-                return new TransactionResponseValidation("C2B00013", "Rejected");
+                return new ValidationResult("C2B00016", "Rejected");
             }
             transactionRequests.setProcessed(0);
-            transactionRequests = transactionRepo.save(transactionRequests);
-            return new TransactionResponseValidation("0", "Accepted", String.valueOf(transactionRequests.getId()));
-        }catch (Exception e){
+            transactionRepo.save(transactionRequests);
+            return new ValidationResult("0", "Accepted");
+        } catch (Exception e) {
             logger.info(e.getMessage());
         }
-        return new TransactionResponseValidation("C2B00013", "Rejected");
-        }
+        return new ValidationResult("C2B00016", "Rejected");
+    }
 
 }

@@ -1,8 +1,8 @@
 package com.tech.eswitch.interfaces;
 
 import com.tech.eswitch.dto.TransactionRequest;
-import com.tech.eswitch.dto.TransactionResponseValidation;
+import com.tech.eswitch.dto.b2c.ValidationResult;
 
 public interface Validate {
-    TransactionResponseValidation validate(TransactionRequest transactionRequest);
+    ValidationResult validate(TransactionRequest transactionRequest);
 }

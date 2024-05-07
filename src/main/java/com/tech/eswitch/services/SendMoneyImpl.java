@@ -83,7 +83,7 @@ public class SendMoneyImpl implements SendMoney {
                     ObjectMapper mapper = new ObjectMapper();
                     SendSuccess sendSuccess = mapper.readValue(res, SendSuccess.class);
                     transaction.setSendMoneySuccessful(1);
-                    transaction.setSendMoneyRetryCount(0);
+                    //transaction.setSendMoneyRetryCount(0);
                     transaction.setSendMoneyRequestId(sendSuccess.getConversationID());
                     transactionRepo.save(transaction);
                 } else {

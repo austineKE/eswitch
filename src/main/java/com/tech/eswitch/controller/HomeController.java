@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.tech.eswitch.configs.ScheduleConf;
 import com.tech.eswitch.dto.*;
+import com.tech.eswitch.dto.b2c.ValidationResult;
 import com.tech.eswitch.dto.sendResult.SendResult;
 import com.tech.eswitch.interfaces.*;
 import com.tech.eswitch.services.B2CStatusAndBalanceImpl;
@@ -69,7 +70,8 @@ public class HomeController {
 
     @PostMapping(path = "/api/v1/c2b", produces = "application/json")
     public ResponseEntity<SimulateTransactionResponse> simulateB2CTransaction(@RequestBody SimulateTransactionRequest simulateTransactionRequest) {
-        return ResponseEntity.ok(darajaApi.simulateC2BTransaction(simulateTransactionRequest));
+       // return ResponseEntity.ok(darajaApi.simulateC2BTransaction(simulateTransactionRequest));
+        return null;
     }
 
     /**
@@ -80,18 +82,8 @@ public class HomeController {
      */
     @RequestMapping(value = "/api/v1/validation", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public TransactionResponseValidation validation(@RequestBody TransactionRequest request) {
-        //Todo -delete this part --------------------
-
-        TransactionResponseValidation transactionResponseValidation=validate.validate(request);
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        try {
-            logger.info("validation"+  ow.writeValueAsString(transactionResponseValidation));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        //Todo -delete this part --------------------
-        return transactionResponseValidation;
+    public ValidationResult validation(@RequestBody TransactionRequest request) {
+        return validate.validate(request);
     }
 
     /**
@@ -104,14 +96,6 @@ public class HomeController {
     @RequestMapping(value = "/api/v1/confirmation", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public TransactionResponseConfirmation confirmation(@RequestBody TransactionRequest request) {
-        //Todo -delete this part --------------------
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        try {
-            logger.info("confirmation"+ow.writeValueAsString(request));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        //Todo -delete this part --------------------
         return confirm.confirm(request);
     }
 
@@ -121,7 +105,7 @@ public class HomeController {
     @Scheduled(cron = "&{cron:*/1 * * * * ?}")
     public void sendMoney() {
         if (scheduleConf.isProceed()) {
-           //sendMoney.sendMoney();
+        //   sendMoney.sendMoney();
         }
     }
 

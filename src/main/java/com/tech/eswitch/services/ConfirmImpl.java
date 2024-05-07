@@ -41,7 +41,7 @@ public class ConfirmImpl implements Confirm {
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
-        return null;
+        return new TransactionResponseConfirmation("10000", "Failed");
     }
 
 }
