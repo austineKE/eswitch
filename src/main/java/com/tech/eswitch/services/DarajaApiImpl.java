@@ -8,8 +8,6 @@ import com.tech.eswitch.configs.MpesaConfiguration;
 import com.tech.eswitch.dto.*;
 import com.tech.eswitch.interfaces.DarajaApi;
 import com.tech.eswitch.utils.HelperUtility;
-import com.tech.eswitch.utils.PropertyReader;
-import com.tech.eswitch.utils.SecurityCredentialsGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +24,7 @@ public class DarajaApiImpl implements DarajaApi {
     private final MpesaConfiguration mpesaConfiguration;
     private final ObjectMapper objectMapper;
 
-    public DarajaApiImpl(MpesaConfiguration mpesaConfiguration,  ObjectMapper objectMapper) {
+    public DarajaApiImpl(MpesaConfiguration mpesaConfiguration, ObjectMapper objectMapper) {
         this.mpesaConfiguration = mpesaConfiguration;
         this.objectMapper = objectMapper;
     }
@@ -79,6 +77,7 @@ public class DarajaApiImpl implements DarajaApi {
                 .url(mpesaConfiguration.getRegisterUrlEndpoint())
                 .post(body)
                 .addHeader("Authorization", String.format("%s %s", BEARER_AUTH_STRING, accessTokenResponse.getAccessToken()))
+                .addHeader("Content-Type", "application/json")
                 .build();
 
         try {
@@ -87,7 +86,7 @@ public class DarajaApiImpl implements DarajaApi {
 
             assert response.body() != null;
             // use Jackson to Decode the ResponseBody ...
-            String s=response.body().string();
+            String s = response.body().string();
             return objectMapper.readValue(s, RegisterUrlResponse.class);
 
         } catch (IOException e) {

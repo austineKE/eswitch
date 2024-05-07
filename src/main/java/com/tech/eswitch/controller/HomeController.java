@@ -7,6 +7,9 @@ import com.tech.eswitch.configs.ScheduleConf;
 import com.tech.eswitch.dto.*;
 import com.tech.eswitch.dto.sendResult.SendResult;
 import com.tech.eswitch.interfaces.*;
+import com.tech.eswitch.services.B2CStatusAndBalanceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @EnableScheduling
 @RestController
 public class HomeController {
+    private Logger logger = LoggerFactory.getLogger(HomeController.class);
     private Validate validate;
     private Confirm confirm;
     private SendMoney sendMoney;
@@ -38,7 +42,7 @@ public class HomeController {
         this.timedOutTransactions = timedOutTransactions;
         this.scheduleConf = scheduleConf;
         this.darajaApi = darajaApi;
-        this.b2CStatusAndBalance=b2CStatusAndBalance;
+        this.b2CStatusAndBalance = b2CStatusAndBalance;
         this.acknowledgeResponse = acknowledgeResponse;
     }
 
@@ -49,7 +53,8 @@ public class HomeController {
 
     @GetMapping(path = "/api/v1/register", produces = "application/json")
     public ResponseEntity<RegisterUrlResponse> registerUrl() {
-        return ResponseEntity.ok(darajaApi.registerUrl());
+//        return ResponseEntity.ok(darajaApi.registerUrl());
+        return null;
     }
 
     @GetMapping(path = "/api/v1/status", produces = "application/json")
@@ -77,14 +82,16 @@ public class HomeController {
     @ResponseBody
     public TransactionResponseValidation validation(@RequestBody TransactionRequest request) {
         //Todo -delete this part --------------------
+
+        TransactionResponseValidation transactionResponseValidation=validate.validate(request);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         try {
-            System.out.println(ow.writeValueAsString(request));
+            logger.info("validation"+  ow.writeValueAsString(transactionResponseValidation));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         //Todo -delete this part --------------------
-        return validate.validate(request);
+        return transactionResponseValidation;
     }
 
     /**
@@ -100,7 +107,7 @@ public class HomeController {
         //Todo -delete this part --------------------
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         try {
-            System.out.println(ow.writeValueAsString(request));
+            logger.info("confirmation"+ow.writeValueAsString(request));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -114,7 +121,7 @@ public class HomeController {
     @Scheduled(cron = "&{cron:*/1 * * * * ?}")
     public void sendMoney() {
         if (scheduleConf.isProceed()) {
-            //   sendMoney.sendMoney();
+           //sendMoney.sendMoney();
         }
     }
 

@@ -5,13 +5,15 @@ import com.tech.eswitch.dto.TransactionResponseConfirmation;
 import com.tech.eswitch.interfaces.Confirm;
 import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class ConfirmImpl implements Confirm {
-
+    private Logger logger = LoggerFactory.getLogger(ConfirmImpl.class);
     TransactionRepo transactionRepo;
 
     public ConfirmImpl(TransactionRepo transactionRepo) {
@@ -21,20 +23,25 @@ public class ConfirmImpl implements Confirm {
     @Override
     public TransactionResponseConfirmation confirm(TransactionRequest transactionRequest) {
 
-        TransactionRequests transactionRequests = transactionRepo
-                .findById(Integer.valueOf(transactionRequest.getThirdPartyTransID())).get();
+        try {
+            TransactionRequests transactionRequests = transactionRepo
+                    .fetchById(transactionRequest.getTransID());
 
-        int amount = Integer.parseInt(transactionRequest.getTransAmount());
-        int amountAwarded = (int) (0.9 * amount);
-        transactionRequests.setAmountAwarded(String.valueOf(amountAwarded));
-        transactionRequests.setCompanyAmount(String.valueOf(amount-amountAwarded));
-        transactionRequests.setProcessed(1);
-        transactionRequests.setSendMoneyRetryCount(0);
-        transactionRequests.setThirdPartyTransID("eSwitch_" + transactionRequests.getTransTime() + "_" + transactionRequests.getId());
+            Double amount = Double.parseDouble(transactionRequest.getTransAmount());
+            int amountAwarded = (int) Math.ceil(0.9 * amount);
+            transactionRequests.setAmountAwarded(String.valueOf(amountAwarded));
+            transactionRequests.setCompanyAmount(String.valueOf(amount - amountAwarded));
+            transactionRequests.setProcessed(1);
+            transactionRequests.setSendMoneyRetryCount(0);
+            transactionRequests.setThirdPartyTransID("eSwitch_" + transactionRequests.getTransTime() + "_" + transactionRequests.getId());
 
-        transactionRepo.save(transactionRequests);
+            transactionRepo.save(transactionRequests);
 
-        return new TransactionResponseConfirmation("0", "Success");
+            return new TransactionResponseConfirmation("0", "Success");
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        return null;
     }
 
 }

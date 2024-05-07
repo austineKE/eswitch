@@ -51,6 +51,6 @@ public class SecurityCredentialsGenerator {
 //    boolean isOnProduction = true; // or false based on your environment
 //    SecurityCredentialsGenerator securityCredentialsGenerator=new SecurityCredentialsGenerator();
 //    String credentials = securityCredentialsGenerator.generateSecurityCredentials(password, isOnProduction);
-//        System.out.println("Security Credentials: " + credentials);
+
 
 }

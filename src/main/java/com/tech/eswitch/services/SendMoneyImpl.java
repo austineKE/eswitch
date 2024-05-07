@@ -10,22 +10,29 @@ import com.tech.eswitch.dto.send.SendSuccess;
 import com.tech.eswitch.interfaces.SendMoney;
 import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
+import com.tech.eswitch.utils.HelperUtility;
 import com.tech.eswitch.utils.PropertyReader;
 import com.tech.eswitch.utils.TokenGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 public class SendMoneyImpl implements SendMoney {
+    private Logger logger = LoggerFactory.getLogger(SendMoneyImpl.class);
     private TransactionRepo transactionRepo;
     private ScheduleConf scheduleConf;
     private TokenGenerator tokenGenerator;
 
-    public SendMoneyImpl(TransactionRepo transactionRepo, ScheduleConf scheduleConf,TokenGenerator tokenGenerator) {
+    public SendMoneyImpl(TransactionRepo transactionRepo, ScheduleConf scheduleConf, TokenGenerator tokenGenerator) {
         this.transactionRepo = transactionRepo;
         this.scheduleConf = scheduleConf;
-        this.tokenGenerator=tokenGenerator;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @Override
@@ -41,6 +48,13 @@ public class SendMoneyImpl implements SendMoney {
                 sendMoneyRequest.setAmount(transaction.getAmountAwarded());
                 sendMoneyRequest.setPartyB(transaction.getMsisdn());
                 sendMoneyRequest.setOriginatorConversationID(transaction.getThirdPartyTransID());
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+                String timestamp = now.format(formatter);
+                String setSecurityCredential = HelperUtility.toBase64String("4267946" + sendMoneyRequest.getSecurityCredential() + timestamp);
+
+                sendMoneyRequest.setSecurityCredential(setSecurityCredential);
                 ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
                 String json = ow.writeValueAsString(sendMoneyRequest);
                 RequestBody body = RequestBody.create(mediaType, json);
@@ -56,15 +70,15 @@ public class SendMoneyImpl implements SendMoney {
                 if (res.contains("errorCode")) {
                     ObjectMapper mapper = new ObjectMapper();
                     SendError sendError = mapper.readValue(res, SendError.class);
-                    System.out.println(res);
-//                    if (!sendError.getErrorMessage().contains("Invalid Access Token")) {
-//                        transaction.setSendMoneySuccessful(0);
-//                        transaction.setSendMoneyRetryCount(transaction.getSendMoneyRetryCount() + 1);
-//                        transaction.setSendMoneyErrorCode(sendError.getErrorCode());
-//                        transaction.setSendMoneyErrorMessage(sendError.getErrorMessage());
-//                        transaction.setSendMoneyRequestId(sendError.getRequestId());
-//                        transactionRepo.save(transaction);
-//                    }
+                    logger.info(res);
+                    if (!sendError.getErrorMessage().contains("Invalid Access Token")) {
+                        transaction.setSendMoneySuccessful(0);
+                        transaction.setSendMoneyRetryCount(transaction.getSendMoneyRetryCount() + 1);
+                        transaction.setSendMoneyErrorCode(sendError.getErrorCode());
+                        transaction.setSendMoneyErrorMessage(sendError.getErrorMessage());
+                        transaction.setSendMoneyRequestId(sendError.getRequestId());
+                        transactionRepo.save(transaction);
+                    }
                 } else if (res.contains("ConversationID")) {
                     ObjectMapper mapper = new ObjectMapper();
                     SendSuccess sendSuccess = mapper.readValue(res, SendSuccess.class);
@@ -73,7 +87,7 @@ public class SendMoneyImpl implements SendMoney {
                     transaction.setSendMoneyRequestId(sendSuccess.getConversationID());
                     transactionRepo.save(transaction);
                 } else {
-                    System.out.println(res);
+                    logger.info(res);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
