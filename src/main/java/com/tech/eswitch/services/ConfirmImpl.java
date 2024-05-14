@@ -29,8 +29,13 @@ public class ConfirmImpl implements Confirm {
 
             Double amount = Double.parseDouble(transactionRequest.getTransAmount());
             int amountAwarded = (int) Math.ceil(0.9 * amount);
+            int companyInitialAmount = (int) Math.ceil(0.1 * amount);
+            int influencerAmount= (int) Math.ceil(0.2 * companyInitialAmount);
+            int taxAmount=(int) Math.ceil(0.16 * companyInitialAmount);
+            int companyAmount = companyInitialAmount-(influencerAmount+taxAmount);
+
             transactionRequests.setAmountAwarded(String.valueOf(amountAwarded));
-            transactionRequests.setCompanyAmount(String.valueOf(amount - amountAwarded));
+            transactionRequests.setCompanyAmount(String.valueOf(companyAmount));
             transactionRequests.setProcessed(1);
             transactionRequests.setSendMoneyRetryCount(0);
             transactionRequests.setThirdPartyTransID("eSwitch_" + transactionRequests.getTransTime() + "_" + transactionRequests.getId());

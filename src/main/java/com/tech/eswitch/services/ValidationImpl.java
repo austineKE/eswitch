@@ -37,12 +37,20 @@ public class ValidationImpl implements Validate {
             transactionRequests.setTransAmount(transactionRequest.getTransAmount());
             transactionRequests.setTransTime(transactionRequest.getTransTime());
             if (!transactionRequest.getFirstName().equalsIgnoreCase("Bonga Everywhere Services")) {
+                    transactionRequests.setProcessed(1);
+                    transactionRequests.setTransactionReversed(1);
+                    transactionRequests.setTransactionCompleted(1);
+                    transactionRequests.setAmountAwarded("0");
+                    transactionRepo.save(transactionRequests);
+                    return new ValidationResult("C2B00016", "Rejected");
+            }
+            if(Integer.parseInt(transactionRequest.getTransAmount()) <10) {
                 transactionRequests.setProcessed(1);
                 transactionRequests.setTransactionReversed(1);
                 transactionRequests.setTransactionCompleted(1);
                 transactionRequests.setAmountAwarded("0");
                 transactionRepo.save(transactionRequests);
-                return new ValidationResult("C2B00016", "Rejected");
+                return new ValidationResult("C2B00013", "Rejected");
             }
             transactionRequests.setProcessed(0);
             transactionRepo.save(transactionRequests);
