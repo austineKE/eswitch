@@ -30,8 +30,8 @@ public class ConfirmImpl implements Confirm {
             Double amount = Double.parseDouble(transactionRequest.getTransAmount());
             int amountAwarded = (int) Math.ceil(0.9 * amount);
             int companyInitialAmount = (int) Math.ceil(0.1 * amount);
-            int influencerAmount= (int) Math.ceil(0.2 * companyInitialAmount);
-            int taxAmount=(int) Math.ceil(0.16 * companyInitialAmount);
+            int influencerAmount= (int) Math.floor(0.2 * companyInitialAmount);
+            int taxAmount=(int) Math.floor(0.16 * companyInitialAmount);
             int companyAmount = companyInitialAmount-(influencerAmount+taxAmount);
 
             transactionRequests.setAmountAwarded(String.valueOf(amountAwarded));
