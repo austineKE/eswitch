@@ -34,6 +34,8 @@ public class TransactionRequests {
     private String sendMoneyRequestId;
     private String sendMoneyErrorMessage;
     private String companyAmount;
+    private String taxAmount;
+    private String influencerAmount;
 
 
     public Integer getId() {
@@ -226,5 +228,21 @@ public class TransactionRequests {
 
     public void setCompanyAmount(String companyAmount) {
         this.companyAmount = companyAmount;
+    }
+
+    public String getTaxAmount() {
+        return taxAmount;
+    }
+
+    public void setTaxAmount(String taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    public String getInfluencerAmount() {
+        return influencerAmount;
+    }
+
+    public void setInfluencerAmount(String influencerAmount) {
+        this.influencerAmount = influencerAmount;
     }
 }

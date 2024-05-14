@@ -35,6 +35,8 @@ public class ConfirmImpl implements Confirm {
             int companyAmount = companyInitialAmount-(influencerAmount+taxAmount);
 
             transactionRequests.setAmountAwarded(String.valueOf(amountAwarded));
+            transactionRequests.setInfluencerAmount(String.valueOf(influencerAmount));
+            transactionRequests.setTaxAmount(String.valueOf(taxAmount));
             transactionRequests.setCompanyAmount(String.valueOf(companyAmount));
             transactionRequests.setProcessed(1);
             transactionRequests.setSendMoneyRetryCount(0);
