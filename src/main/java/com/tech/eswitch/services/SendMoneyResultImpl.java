@@ -23,10 +23,10 @@ public class SendMoneyResultImpl implements SendMoneyResult {
     @Override
     public void sendMoneyResult(SendResult sendResult) {
         try {
-            Integer initialTransactionId = Integer.parseInt(sendResult.getResult()
-                    .getOriginatorConversationID().split("_")[2]);
+            String initialTransactionId = sendResult.getResult()
+                    .getConversationID();
             TransactionRequests transactionRequests = transactionRepo
-                    .findById(initialTransactionId).get();
+                    .fetchByConversationId(initialTransactionId);
             transactionRequests.setTransactionCompleted(1);
             transactionRepo.save(transactionRequests);
 

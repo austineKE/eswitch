@@ -12,12 +12,12 @@ import com.tech.eswitch.model.TransactionRequests;
 import com.tech.eswitch.repo.TransactionRepo;
 import com.tech.eswitch.utils.HelperUtility;
 import com.tech.eswitch.utils.PropertyReader;
+import com.tech.eswitch.utils.SecurityCredentialsGenerator;
 import com.tech.eswitch.utils.TokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -49,12 +49,18 @@ public class SendMoneyImpl implements SendMoney {
                 sendMoneyRequest.setPartyB(transaction.getMsisdn());
                 sendMoneyRequest.setOriginatorConversationID(transaction.getThirdPartyTransID());
 
+                String password = PropertyReader.getProperty("eSwitch.send.money.securityCredential");
+                boolean isOnProduction = true; // or false based on your environment
+                SecurityCredentialsGenerator securityCredentialsGenerator = new SecurityCredentialsGenerator();
+                String credentials = securityCredentialsGenerator.generateSecurityCredentials(password, isOnProduction);
+
                 LocalDateTime now = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
                 String timestamp = now.format(formatter);
                 String setSecurityCredential = HelperUtility.toBase64String("4267946" + sendMoneyRequest.getSecurityCredential() + timestamp);
 
-                sendMoneyRequest.setSecurityCredential(setSecurityCredential);
+//                sendMoneyRequest.setSecurityCredential(setSecurityCredential);
+                sendMoneyRequest.setSecurityCredential(credentials);
                 ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
                 String json = ow.writeValueAsString(sendMoneyRequest);
                 RequestBody body = RequestBody.create(mediaType, json);
@@ -62,7 +68,7 @@ public class SendMoneyImpl implements SendMoney {
                         .url(PropertyReader.getProperty("eSwitch.send.money.url"))
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("Authorization", tokenGenerator.getToken())
+                        .addHeader("Authorization", "Bearer " + tokenGenerator.getToken())
                         .build();
                 Response response = client.newCall(request).execute();
                 //todo parse response

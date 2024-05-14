@@ -14,4 +14,7 @@ public interface TransactionRepo extends CrudRepository<TransactionRequests, Int
 
     @Query(nativeQuery = true, value = "SELECT * FROM transaction_requests where  transid = ?;")
     TransactionRequests fetchById(String transId);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM transaction_requests where  send_money_request_id = ?;")
+    TransactionRequests fetchByConversationId(String transId);
 }

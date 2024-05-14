@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
 
-    private Logger logger=LoggerFactory.getLogger(B2CStatusAndBalanceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(B2CStatusAndBalanceImpl.class);
     private TokenGenerator tokenGenerator;
 
     public B2CStatusAndBalanceImpl(TokenGenerator tokenGenerator) {
@@ -34,7 +34,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
             logger.info("Begin calling safaricom for account balance");
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
-            AccountBalanceRequest balanceRequest=new AccountBalanceRequest();
+            AccountBalanceRequest balanceRequest = new AccountBalanceRequest();
             balanceRequest.setRemarks("Get Account Balance");
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(balanceRequest);
@@ -74,7 +74,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
         try {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
-            TransactionStatusRequest statusRequest=new TransactionStatusRequest();
+            TransactionStatusRequest statusRequest = new TransactionStatusRequest();
             statusRequest.setRemarks("Get transaction status");
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(statusRequest);
@@ -83,7 +83,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
                     .url(PropertyReader.getProperty("eSwitch.transaction.status"))
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", tokenGenerator.getToken())
+                    .addHeader("Authorization", "Bearer" + tokenGenerator.getToken())
                     .build();
             Response response = client.newCall(request).execute();
             //todo parse response

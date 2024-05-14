@@ -107,6 +107,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>com.eswitch_b2c</groupId>-->
+<!--			<artifactId>eswitch_b2c</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--			<scope>system</scope>-->
+<!--			<systemPath>${project.basedir}/src/main/resources/eswitch_b2c.jar</systemPath>-->
+<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>

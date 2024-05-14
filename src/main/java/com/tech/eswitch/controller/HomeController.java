@@ -105,7 +105,7 @@ public class HomeController {
     @Scheduled(cron = "&{cron:*/1 * * * * ?}")
     public void sendMoney() {
         if (scheduleConf.isProceed()) {
-        //   sendMoney.sendMoney();
+           sendMoney.sendMoney();
         }
     }
 
@@ -138,14 +138,6 @@ public class HomeController {
     @RequestMapping(value = "/api/v1/result", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public void sendMoneyResult(@RequestBody SendResult request) {
-        //Todo -delete this part --------------------
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        try {
-            System.out.println(ow.writeValueAsString(request));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        //Todo -delete this part --------------------
         sendMoneyResult.sendMoneyResult(request);
     }
 

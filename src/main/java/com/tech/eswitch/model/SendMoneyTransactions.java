@@ -10,7 +10,7 @@ public class SendMoneyTransactions {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
-    private Integer initialTransactionId;
+    private String initialTransactionId;
     private Integer resultType;
     private Integer resultCode;
     private String resultDesc;
@@ -35,11 +35,11 @@ public class SendMoneyTransactions {
         this.id = id;
     }
 
-    public Integer getInitialTransactionId() {
+    public String getInitialTransactionId() {
         return initialTransactionId;
     }
 
-    public void setInitialTransactionId(Integer initialTransactionId) {
+    public void setInitialTransactionId(String initialTransactionId) {
         this.initialTransactionId = initialTransactionId;
     }
 
