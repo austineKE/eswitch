@@ -66,7 +66,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
     }
 
     @Override
-    public Object getTransactionStatus() {
+    public Object getTransactionStatus(TransactionStatusRequest transactionStatusRequest) {
         //todo create the POST request here to hit Safaricom and get transaction status.
         // We will use this API to confirm failed transactions.
         // In case you come up with any dto, have it b2c package
@@ -76,6 +76,9 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
             MediaType mediaType = MediaType.parse("application/json");
             TransactionStatusRequest statusRequest = new TransactionStatusRequest();
             statusRequest.setRemarks("Get transaction status");
+            if (statusRequest.getTransactionID() == null || statusRequest.getTransactionID().equals(""))
+                statusRequest.setTransactionID(transactionStatusRequest.getTransactionID());
+            statusRequest.setCommandId(transactionStatusRequest.getCommandId());
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             String json = ow.writeValueAsString(statusRequest);
             RequestBody body = RequestBody.create(mediaType, json);
@@ -83,7 +86,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
                     .url(PropertyReader.getProperty("eSwitch.transaction.status"))
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", "Bearer" + tokenGenerator.getToken())
+                    .addHeader("Authorization", "Bearer " + tokenGenerator.getToken())
                     .build();
             Response response = client.newCall(request).execute();
             //todo parse response
@@ -96,6 +99,7 @@ public class B2CStatusAndBalanceImpl implements B2CStatusAndBalance {
                 return sendError;
             } else if (res.contains("ConversationID")) {
                 // TODO: 5/5/2024 confirm what to do when the request is successful
+                return res;
             } else {
                 System.out.println(res);
             }

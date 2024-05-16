@@ -8,7 +8,6 @@ import com.tech.eswitch.dto.*;
 import com.tech.eswitch.dto.b2c.ValidationResult;
 import com.tech.eswitch.dto.sendResult.SendResult;
 import com.tech.eswitch.interfaces.*;
-import com.tech.eswitch.services.B2CStatusAndBalanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -58,9 +57,9 @@ public class HomeController {
         return null;
     }
 
-    @GetMapping(path = "/api/v1/status", produces = "application/json")
-    public ResponseEntity<Object> getTransactionStatus() {
-        return ResponseEntity.ok(b2CStatusAndBalance.getTransactionStatus());
+    @PostMapping(path = "/api/v1/status", produces = "application/json")
+    public ResponseEntity<Object> getTransactionStatus(@RequestBody TransactionStatusRequest statusRequest) {
+        return ResponseEntity.ok(b2CStatusAndBalance.getTransactionStatus(statusRequest));
     }
 
     @GetMapping(path = "/api/v1/balance", produces = "application/json")
