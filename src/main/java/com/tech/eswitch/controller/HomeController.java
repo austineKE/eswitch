@@ -6,15 +6,18 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.tech.eswitch.configs.ScheduleConf;
 import com.tech.eswitch.dto.*;
 import com.tech.eswitch.dto.b2c.ValidationResult;
+import com.tech.eswitch.dto.partner.Records;
+import com.tech.eswitch.dto.partner.TransactionTotals;
 import com.tech.eswitch.dto.sendResult.SendResult;
 import com.tech.eswitch.interfaces.*;
-import com.tech.eswitch.services.B2CStatusAndBalanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @EnableScheduling
@@ -30,12 +33,14 @@ public class HomeController {
     private final DarajaApi darajaApi;
     private final AcknowledgeResponse acknowledgeResponse;
     private B2CStatusAndBalance b2CStatusAndBalance;
+    private PartnerRecords partnerRecords;
 
     public HomeController(final Validate validate, final Confirm confirm, final SendMoney sendMoney
             , TimedOutTransactions timedOutTransactions, SendMoneyResult sendMoneyResult,
                           ScheduleConf scheduleConf,
                           DarajaApi darajaApi,
-                          AcknowledgeResponse acknowledgeResponse, B2CStatusAndBalance b2CStatusAndBalance) {
+                          AcknowledgeResponse acknowledgeResponse, B2CStatusAndBalance b2CStatusAndBalance,
+                          PartnerRecords partnerRecords) {
         this.validate = validate;
         this.confirm = confirm;
         this.sendMoney = sendMoney;
@@ -45,6 +50,7 @@ public class HomeController {
         this.darajaApi = darajaApi;
         this.b2CStatusAndBalance = b2CStatusAndBalance;
         this.acknowledgeResponse = acknowledgeResponse;
+        this.partnerRecords = partnerRecords;
     }
 
     @GetMapping(path = "/api/v1/token", produces = "application/json")
@@ -70,7 +76,7 @@ public class HomeController {
 
     @PostMapping(path = "/api/v1/c2b", produces = "application/json")
     public ResponseEntity<SimulateTransactionResponse> simulateB2CTransaction(@RequestBody SimulateTransactionRequest simulateTransactionRequest) {
-       // return ResponseEntity.ok(darajaApi.simulateC2BTransaction(simulateTransactionRequest));
+        // return ResponseEntity.ok(darajaApi.simulateC2BTransaction(simulateTransactionRequest));
         return null;
     }
 
@@ -105,7 +111,7 @@ public class HomeController {
     @Scheduled(cron = "&{cron:*/1 * * * * ?}")
     public void sendMoney() {
         if (scheduleConf.isProceed()) {
-           sendMoney.sendMoney();
+            sendMoney.sendMoney();
         }
     }
 
@@ -140,5 +146,25 @@ public class HomeController {
     public void sendMoneyResult(@RequestBody SendResult request) {
         sendMoneyResult.sendMoneyResult(request);
     }
+
+    @GetMapping(path = "/api/v1/records", produces = "application/json")
+    public List<Records> getPartnerTransactions(@RequestParam String accountId, @RequestParam String password,
+                                                @RequestParam String date) {
+        return partnerRecords.getRecords(accountId, password, date);
+    }
+
+
+    @GetMapping(path = "/api/v1/all-records", produces = "application/json")
+    public List<Records> getAllTransactions(@RequestParam String password,
+                                            @RequestParam String date, @RequestParam Integer status) {
+        return partnerRecords.getAllRecords(password, date, status);
+    }
+
+    @GetMapping(path = "/api/v1/totals", produces = "application/json")
+    public List<TransactionTotals> getTransactionTotals(@RequestParam String password,
+                                                        @RequestParam String date) {
+        return partnerRecords.getTransactionTotals(password, date);
+    }
+
 
 }
