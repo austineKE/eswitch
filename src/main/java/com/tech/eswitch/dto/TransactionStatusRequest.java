@@ -7,7 +7,7 @@ public class TransactionStatusRequest {
     @JsonProperty("CommandID")
     private String commandId= Properties.getCommandId();;
     @JsonProperty("PartyA")
-    private String partyA;
+    private String partyA= Properties.getPartyA();;
     @JsonProperty("IdentifierType")
     private String identifierType = "4";
     @JsonProperty("Remarks")
@@ -16,7 +16,7 @@ public class TransactionStatusRequest {
     private String initiator= Properties.getInitiator();;
     @JsonProperty("SecurityCredential")
     private String securityCredential= Properties.getSecurityCredential();;
-    @JsonProperty("QueueTimeoutURL")
+    @JsonProperty("QueueTimeOutURL")
     private String queueTimeOutUrl = Properties.getQueueTimeOutURL();;
     @JsonProperty("TransactionID")
     private String transactionID;

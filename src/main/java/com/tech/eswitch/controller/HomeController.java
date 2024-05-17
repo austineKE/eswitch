@@ -64,9 +64,9 @@ public class HomeController {
         return null;
     }
 
-    @GetMapping(path = "/api/v1/status", produces = "application/json")
-    public ResponseEntity<Object> getTransactionStatus() {
-        return ResponseEntity.ok(b2CStatusAndBalance.getTransactionStatus());
+    @PostMapping(path = "/api/v1/status", produces = "application/json")
+    public ResponseEntity<Object> getTransactionStatus(@RequestBody TransactionStatusRequest statusRequest) {
+        return ResponseEntity.ok(b2CStatusAndBalance.getTransactionStatus(statusRequest));
     }
 
     @GetMapping(path = "/api/v1/balance", produces = "application/json")
